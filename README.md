@@ -91,6 +91,37 @@ npm run dev
 npm run build
 ```
 
+### 🧩 Serveur d'appoint Exposants (fallback)
+Ce micro-serveur Express permet d'exposer une route `/exhibitors` protégée par un secret pour contourner d'éventuelles limites RLS côté client.
+
+1) Variables d'environnement (fichier `.env.local` à la racine):
+
+```bash
+SUPABASE_URL=...                      # URL projet Supabase
+SUPABASE_SERVICE_ROLE_KEY=...         # Clé service_role (ne pas committer)
+EXHIBITORS_SECRET=dev-secret          # Secret partagé pour sécuriser l'endpoint
+EXHIBITORS_PORT=4002                  # Optionnel (défaut 4002)
+
+# Frontend (optionnel) pour consommer l'endpoint fallback
+VITE_EXHIBITORS_SERVER_URL=http://localhost:4002
+VITE_EXHIBITORS_SECRET=dev-secret
+```
+
+2) Démarrer le serveur:
+
+```powershell
+npm run exhibitors-server
+```
+
+3) Vérifier la santé et l'endpoint:
+
+```powershell
+curl http://localhost:4002/health
+curl "http://localhost:4002/exhibitors?secret=dev-secret"
+```
+
+Le frontend utilise `VITE_EXHIBITORS_SERVER_URL` et `VITE_EXHIBITORS_SECRET` (configurés ci-dessus) pour le repli automatique depuis `exhibitorStore`.
+
 ### **☁️ Déploiement Cloud**
 ```bash
 # Railway
